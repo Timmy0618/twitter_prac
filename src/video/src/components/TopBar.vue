@@ -15,6 +15,9 @@
     <router-link to="/Posts">
       <el-menu-item>Posts</el-menu-item>
     </router-link>
+    <router-link to="/Friend">
+      <el-menu-item> Friend </el-menu-item>
+    </router-link>
     <router-link to="/Login">
       <el-menu-item> Login </el-menu-item>
     </router-link>
@@ -23,9 +26,7 @@
 
 <script>
 export default {
-  name: "LeftBar",
-  props: {
-
-  },
+  name: "TopBar",
+  props: {},
 };
 </script>

@@ -4,7 +4,7 @@
       <h1>Posts</h1>
     </el-row>
 
-    <el-container v-for="post in posts" :key="post._id">
+    <el-container v-for="(post, index) in posts" :key="post._id">
       <el-aside>
         <el-avatar
           v-if="post.user_avatar != ''"
@@ -28,8 +28,34 @@
             lazy
           />
         </el-row>
-        <el-row>
-          <span> {{ post.post }} </span>
+        <el-row :gutter="10">
+          <el-col :span="4">
+            <span> {{ post.post }} </span>
+          </el-col>
+
+          <el-col :span="4">
+            <el-button
+              v-if="checkLike(post.likes)"
+              type="primary"
+              @click="disLike(post._id, index)"
+            >
+              like
+            </el-button>
+            <el-button
+              v-else
+              type="primary"
+              plain
+              @click="like(post._id, index)"
+            >
+              like
+            </el-button>
+          </el-col>
+
+          <el-col :span="4">
+            <el-button type="text" @click="open">
+              {{ likeNums(post.likes) }}
+            </el-button>
+          </el-col>
         </el-row>
       </el-main>
     </el-container>
@@ -56,17 +82,68 @@ export default {
       ],
     };
   },
+
   methods: {
     getPosts() {
       let me = this;
       axios.get(api.main.getPost).then(function (response) {
         if (response.data.Code == 200) {
-          console.log(response.data.Data);
           me.posts = response.data.Data;
         }
       });
     },
+
+    checkLike(likes) {
+      if (likes) {
+        let userId = localStorage.userId;
+        return likes.includes(userId);
+      } else {
+        return false;
+      }
+    },
+
+    like(postId, index) {
+      let me = this;
+
+      axios.post(api.post.likePost + postId).then(function (response) {
+        if (response.data.Code == 200) {
+          console.log(response.data);
+          me.posts[index].likes = response.data.Data.likes;
+        }
+      });
+    },
+
+    disLike(postId, index) {
+      let me = this;
+
+      axios.delete(api.post.likePost + postId).then(function (response) {
+        if (response.data.Code == 200) {
+          console.log(response.data);
+          me.posts[index].likes = response.data.Data.likes;
+        }
+      });
+    },
+
+    open() {
+      this.$alert("This is a message", "Title", {
+        confirmButtonText: "OK",
+        callback: (action) => {
+          this.$message({
+            type: "info",
+            message: `action: ${action}`,
+          });
+        },
+      });
+    },
+
+    likeNums(likes) {
+      if (likes) return likes.length;
+      return 0;
+    },
   },
+
+  computed: {},
+
   mounted() {
     this.getPosts();
   },

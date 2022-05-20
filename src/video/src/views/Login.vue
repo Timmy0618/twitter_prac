@@ -52,6 +52,7 @@ export default {
           if (response.data.Code == 200) {
             alert(response.data.Msg);
             localStorage.token = response.data.Data.token;
+            localStorage.userId = response.data.Data.userId;
             axios.defaults.headers.common[
               "Authorization"
             ] = `Bearer ${response.data.Data.token}`;
